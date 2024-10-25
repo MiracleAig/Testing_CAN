@@ -14,35 +14,42 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   double yaw, pitch, roll;
   int sparkID = 5;
+  int pideonID = 1;
+
+  double timerStorage;
 
   CANSparkMax motorController  =  new CANSparkMax(5, MotorType.kBrushless);
 
 
-  Pigeon2 gyro = new Pigeon2(sparkID); //Instantiate gyroscope with same ID as spark max
+  Pigeon2 gyro = new Pigeon2(pideonID); //Instantiate gyroscope with same ID as spark max
   Timer timer = new Timer(); //Instantiate a timer object 
 
   
 
   @Override
   public void robotInit() {
-
-    yaw = gyro.getYaw().getValue(); // Thgis is how we get the value of the yaw from the gyroscope, but we will prob. have to move this to a periodic funcion
-
     timer.start(); // Start the timer when the robot is booted and ready
   }
 
   @Override
   public void robotPeriodic() {
+    pitch = gyro.getPitch().getValue();
     yaw = gyro.getYaw().getValue();
     roll = gyro.getRoll().getValue();
 
+    timerStorage = timer.get();
+
+    // Send the data to smart dashboard
     SmartDashboard.putNumber("Yaw", yaw);
     SmartDashboard.putNumber("Pitch", pitch);
     SmartDashboard.putNumber("Roll", roll);
-    System.out.println(timer.get());
+    System.out.println(timerStorage);
 
-    if(timer.get()>0){ // need to change this to make it where it only runs for five seconds then stops
+    if(timerStorage < 5){ // need to change this to make it where it only runs for five seconds then stops
       motorController.set(0.1);
+    }
+    else {
+      motorController.set(0);
     }
   }
 
