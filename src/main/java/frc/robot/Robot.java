@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -14,14 +13,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   double yaw, pitch, roll;
   int sparkID = 5;
-  int pideonID = 1;
+  int pigeonID = 1;
 
   double timerStorage;
 
   CANSparkMax motorController  =  new CANSparkMax(5, MotorType.kBrushless);
 
 
-  Pigeon2 gyro = new Pigeon2(pideonID); //Instantiate gyroscope with same ID as spark max
+  Pigeon2 gyro = new Pigeon2(pigeonID); //Instantiate gyroscope with its corresponding ID
   Timer timer = new Timer(); //Instantiate a timer object 
 
   
@@ -45,13 +44,18 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Roll", roll);
     System.out.println(timerStorage);
 
-    if(timerStorage < 5){ // need to change this to make it where it only runs for five seconds then stops
-      motorController.set(0.1);
-    }
-    else {
+     if(timerStorage < 5){ // need to change this to make it where it only runs for five seconds then stops
+       motorController.set(0.1);
+     } else if(timerStorage < 10) {
+       motorController.set(0);
+     } else if(timerStorage < 15){
+       motorController.set(-0.1);
+     } else if(timerStorage < 20){
       motorController.set(0);
-    }
+     }
   }
+
+ 
 
   
 
@@ -65,6 +69,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     timer.reset(); // Reset the timer anytime we enter teleop
     
+    if(timer.get() == 20.0){
+      timer.reset();
+    }
   }
 
   @Override
